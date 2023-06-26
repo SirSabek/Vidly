@@ -1,0 +1,65 @@
+# Rider
+.idea/
+
+# Compiled files
+*.dll
+*.exe
+*.pdb
+
+# NuGet packages
+*.nuget.targets
+*.nuget.props
+packages/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# NCrunch
+*.ncrunch*
+.*crunch*.local.xml
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+build/
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+
+# Visual Studio 2017 auto-generated files
+Generated\ Files/
+
+# MSTest build output
+[Tt]est[Rr]esult*
+
+# Resharper files
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# TeamCity build folder
+[Tt]eam[Cc]ity/
+
+# DotCover plugin setting
+*.dotCover
+
+# NCrunch
+_NCrunch_*
+.*Crunch*.local.xml
+
+# Installshield output folder
+[Ee]xpress/
+
+# DocProject build output
+[Dd]oc[Ss]tyle*
+
+# Click-Once deployment files
+publish/
+
+# Publish Web Output
+*.[Pp]ublish.xml
+*.azurePubxml
