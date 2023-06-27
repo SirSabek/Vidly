@@ -1,0 +1,9 @@
+﻿@model Vidly.ViewModels.CustomersViewModel
+
+@{
+    Layout = null;
+}
+@foreach(var customer in Model.Customers)
+{
+   <h2>@customer.Name</h2>
+}
