@@ -14,28 +14,32 @@ public class MembershipConfiguration : IEntityTypeConfiguration<MembershipType>
                 Id = 1,
                 SignUpFee = 0,
                 DurationInMonths = 0,
-                DiscountRate = 0
+                DiscountRate = 0,
+                Name = "Pay as You Go"
             },
             new MembershipType
             {
                 Id = 2,
                 SignUpFee = 30,
                 DurationInMonths = 1,
-                DiscountRate = 10
+                DiscountRate = 10,
+                Name = "Monthly"
             },
             new MembershipType
             {
                 Id = 3,
                 SignUpFee = 90,
                 DurationInMonths = 3,
-                DiscountRate = 15
+                DiscountRate = 15,
+                Name = "Quarterly"
             },
             new MembershipType
             {
                 Id = 4,
                 SignUpFee = 300,
                 DurationInMonths = 12,
-                DiscountRate = 20
+                DiscountRate = 20,
+                Name = "Annual"
             }
         );
     }

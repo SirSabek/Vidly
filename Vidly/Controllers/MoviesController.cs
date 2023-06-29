@@ -1,84 +1,33 @@
 using Microsoft.AspNetCore.Mvc;
 using Vidly.Models;
-using Vidly.ViewModels;
 
 namespace Vidly.Controllers;
 
 public class MoviesController : Controller
 {
-    public IActionResult Random()
+    private readonly AppDbContext _context;
+
+    public MoviesController(AppDbContext context)
     {
-        var movie = new Movie() { Name = "Shrek!" };
-        var customers = new List<Customer>
-        {
-            new Customer { Name = "Customer 1" },
-            new Customer { Name = "Customer 2" }
-        };
-        var viewModel = new RandomMovieViewModel
-        {
-            Movie = movie,
-            Customers = customers
-        };
-        return View(viewModel);  
+        _context = context;
     }
-    
-    public IActionResult Movies()
+
+    protected override void Dispose(bool disposing)
     {
-       var movies = new List<Movie>
-       {
-           new Movie { Name = "Shrek!" },
-           new Movie { Name = "Wall-e" }
-       };
-       var viewModel = new MoviesViewModel
-       {
-           Movies = movies
-       };
-       return View(viewModel);
+       _context.Dispose();
     }
-    
-    public IActionResult Customers()
+
+    public IActionResult Index()
     {
-        var customers = new List<Customer>
-        {
-            new ()
-            {
-                Name = "Customer 1",
-                Id = 1
-            },
-            new ()
-            {
-                Name = "Customer 2",
-                Id = 2
-            }
-        };
-        var viewModel = new CustomersViewModel
-        {
-            Customers = customers
-        };
-        return View(viewModel);
+        var movies = _context.Movies.ToList();
+        return View(movies);
     }
-    
-    [Route("Customers/Details/{id}")]
+    [Route("movies/details/{id}")]
     public IActionResult Details(int id)
     {
-        var customers = new List<Customer>
-        {
-            new()
-            {
-                Name = "Customer 1",
-                Id = 1
-            },
-            new()
-            {
-                Name = "Customer 2",
-                Id = 2
-            }
-        };
-        var viewModel = new CustomersViewModel
-        {
-            Customers = customers.Where(c => c.Id == id).ToList()
-        };
-        return View(viewModel);
+        var movie = _context.Movies.SingleOrDefault(m => m.Id == id);
+        if (movie == null)
+            return NotFound();
+        return View(movie);
     }
-    
 }
