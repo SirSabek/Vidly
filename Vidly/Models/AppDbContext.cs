@@ -12,7 +12,9 @@ public class AppDbContext : IdentityDbContext<AppUser>
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new MembershipConfiguration());
         modelBuilder.ApplyConfiguration(new MoviesConfiguration());
+        modelBuilder.ApplyConfiguration(new CustomersConfiguration());
     }
     public DbSet<Movie> Movies { get; set; }
     public DbSet<Customer> Customers { get; set; }
+    public DbSet<MembershipType> MembershipTypes { get; set; }
 }
