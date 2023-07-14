@@ -6,7 +6,10 @@
 }
 
 <h2>Customers</h2>
-
+@* add button to add new customer *@
+<p>
+    @Html.ActionLink("New Customer", "AddNewCustomer", "Customers", null, new { @class = "btn btn-primary" })
+</p>
 <table>
     <tbody>
     

@@ -2,7 +2,52 @@
 
 @{
     ViewBag.Title = "title";
-    Layout = "_Layout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>title</h2>
+@if (Model.Movie.Id == 0)
+{
+    <h2>Add New Movie</h2>
+}
+else
+{
+    <h2>Edit Movie</h2>
+}
+
+@using (Html.BeginForm("Save", "Movies"))
+{
+    <div class="form-group">
+        @Html.LabelFor(m=>m.Movie.Name)
+        @Html.TextBoxFor(m=>m.Movie.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m=>m.Movie.Name)
+
+    </div> 
+    
+    <div class="form-group">
+        @Html.LabelFor(m=>m.Movie.ReleaseDate)
+        @* crate a text box for the birth date with showing the time and show a placeholder for the field *@ 
+        @Html.TextBoxFor(m=>m.Movie.ReleaseDate, "{0:d MMM yyyy}", new { @class = "form-control", placeholder = "dd MMM yyyy" })
+        @Html.ValidationMessageFor(m=>m.Movie.ReleaseDate)
+    </div>
+    
+    <div class="form-group">
+        @Html.LabelFor(m=>m.Movie.Genre)
+        @Html.DropDownListFor(m=>m.Movie.Genre, new SelectList(Model.Genres), "Select Genre Type", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m=>m.Movie.Genre)
+    </div> 
+    
+    <div class="form-group">
+        @Html.LabelFor(m=>m.Movie.NumberInStock)
+        @Html.TextBoxFor(m=>m.Movie.NumberInStock, new { @class = "form-control" })
+@Html.ValidationMessageFor(m=>m.Movie.NumberInStock)
+    </div> 
+    
+    @Html.HiddenFor(m=>m.Movie.Id)
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-primary">Save</button>
+}
+
+@section Scripts{
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
+
