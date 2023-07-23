@@ -21,10 +21,13 @@ namespace Vidly.Controllers.API
         }
 
         [HttpGet]
-        public IEnumerable<CustomerDto> GetCustomers()
+        public IActionResult GetCustomers()
         {
-            //mapping Customer to CustomerDto
-            return _mapper.Map<IEnumerable<Customer>, IEnumerable<CustomerDto>>(_context.Customers.ToList());
+            var customers = _context.Customers;
+            var recordsTotal = customers.Count();
+            var jsonData = new { recordsTotal, data = customers };
+
+            return Ok(jsonData);
         }
 
         [HttpGet("{id}")]
