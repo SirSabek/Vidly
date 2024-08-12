@@ -11,7 +11,7 @@ public class Movie
     public Genre Genre { get; set; }
     
     [Display(Name = "Genre")]
-    [Microsoft.Build.Framework.Required]
+    [Required]
     public byte GenreId { get; set; }
     [Required]
     public DateTime ReleaseDate { get; set; }

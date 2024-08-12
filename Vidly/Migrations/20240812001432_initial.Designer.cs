@@ -12,15 +12,15 @@ using Vidly.Models;
 namespace Vidly.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230629231153_seedingMovies")]
-    partial class seedingMovies
+    [Migration("20240812001432_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.8")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -250,6 +250,40 @@ namespace Vidly.Migrations
                     b.HasIndex("MembershipTypeId");
 
                     b.ToTable("Customers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BirthDate = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsSubscribedToNewsLetter = true,
+                            MembershipTypeId = (byte)1,
+                            Name = "John Smith"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BirthDate = new DateTime(1995, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsSubscribedToNewsLetter = false,
+                            MembershipTypeId = (byte)2,
+                            Name = "Mary Williams"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BirthDate = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsSubscribedToNewsLetter = true,
+                            MembershipTypeId = (byte)3,
+                            Name = "John Doe"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BirthDate = new DateTime(2005, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsSubscribedToNewsLetter = false,
+                            MembershipTypeId = (byte)4,
+                            Name = "Jane Doe"
+                        });
                 });
 
             modelBuilder.Entity("Vidly.Models.MembershipType", b =>
@@ -272,7 +306,7 @@ namespace Vidly.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MembershipType");
+                    b.ToTable("MembershipTypes");
 
                     b.HasData(
                         new
@@ -317,16 +351,80 @@ namespace Vidly.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("Genre")
                         .HasColumnType("int");
+
+                    b.Property<byte>("GenreId")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NumberInStock")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReleaseDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.ToTable("Movies");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DateAdded = new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Genre = 2,
+                            GenreId = (byte)0,
+                            Name = "Shrek",
+                            NumberInStock = 6,
+                            ReleaseDate = new DateTime(2001, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DateAdded = new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Genre = 3,
+                            GenreId = (byte)0,
+                            Name = "Wall-e",
+                            NumberInStock = 3,
+                            ReleaseDate = new DateTime(2008, 6, 27, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DateAdded = new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Genre = 2,
+                            GenreId = (byte)0,
+                            Name = "The Hangover",
+                            NumberInStock = 5,
+                            ReleaseDate = new DateTime(2009, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DateAdded = new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Genre = 4,
+                            GenreId = (byte)0,
+                            Name = "Anastasia",
+                            NumberInStock = 2,
+                            ReleaseDate = new DateTime(1997, 11, 21, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DateAdded = new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Genre = 1,
+                            GenreId = (byte)0,
+                            Name = "Die Hard",
+                            NumberInStock = 4,
+                            ReleaseDate = new DateTime(1988, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

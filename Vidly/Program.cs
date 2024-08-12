@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using Vidly.Configurations;
 using Vidly.Models;
@@ -17,7 +15,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 });
 
 //add AppDbContext to the services container
-builder.Services.AddDbContext<AppDbContext>(options => 
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
