@@ -33,47 +33,59 @@ public class CustomersController : Controller
             return NotFound();
         return View(customer);
     }
-    
-    public IActionResult AddNewCustomer() 
+
+  public IActionResult AddNewCustomer() 
+{
+    var membershipTypes = _context.MembershipTypes.ToList();
+    var viewModel = new CustomerFormViewModel
     {
-        var membershipTypes = _context.MembershipTypes.ToList();
+        Customer = new Customer(),
+        MembershipTypes = membershipTypes
+    };
+    return View("CustomerForm", viewModel);
+}
+
+[HttpPost]
+[ValidateAntiForgeryToken]
+public IActionResult Save(Customer customer)
+{
+    ModelState.Remove("Customer.MembershipType");
+    if (!ModelState.IsValid)
+    {
+        var errors = ModelState.Values.SelectMany(v => v.Errors);
+        foreach (var error in errors)
+        {
+            Console.WriteLine(error.ErrorMessage);
+        }
         var viewModel = new CustomerFormViewModel
         {
-            Customer = new Customer(),
-            MembershipTypes = membershipTypes
+            Customer = customer,
+            MembershipTypes = _context.MembershipTypes.ToList()
         };
-        return View(viewModel);
+        return View("CustomerForm", viewModel);
     }
-    
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult Save(Customer customer)
-    {
-        if (!ModelState.IsValid)
-        {
-            var viewModel = new CustomerFormViewModel
-            {
-                Customer = customer,
-                MembershipTypes = _context.MembershipTypes.ToList()
-            };
-            return View("addnewcustomer", viewModel);
-        }
-        if (customer.Id == 0)
-        {
-            _context.Customers.Add(customer);
-        }
-        else
-        {
-            var customerInDb = _context.Customers.FirstOrDefault(c => c.Id == customer.Id);
-            customerInDb.Name = customer.Name;
-            customerInDb.BirthDate = customer.BirthDate;
-            customerInDb.MembershipType = customer.MembershipType;
-            customerInDb.IsSubscribedToNewsLetter = customer.IsSubscribedToNewsLetter;
-        }
 
-        _context.SaveChanges();
-        return RedirectToAction("Index", "Customers");
+    if (customer.Id == 0)
+    {
+        _context.Customers.Add(customer);
     }
+    else
+    {
+        var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == customer.Id);
+
+        if (customerInDb == null)
+            return NotFound();
+
+        customerInDb.Name = customer.Name;
+        customerInDb.BirthDate = customer.BirthDate;
+        customerInDb.MembershipTypeId = customer.MembershipTypeId;
+        customerInDb.IsSubscribedToNewsLetter = customer.IsSubscribedToNewsLetter;
+    }
+
+    _context.SaveChanges();
+
+    return RedirectToAction("Index", "Customers");
+}
 
     public IActionResult Edit(int id)
     {
@@ -87,6 +99,6 @@ public class CustomersController : Controller
             Customer = customer,
             MembershipTypes = _context.MembershipTypes.ToList()
         };
-        return View("AddNewCustomer", viewModel);
+        return View("CustomerForm", viewModel);
     }
 }
