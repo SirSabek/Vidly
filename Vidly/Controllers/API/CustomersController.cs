@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Vidly.Dtos;
 using Vidly.Models;
 
@@ -23,7 +24,7 @@ namespace Vidly.Controllers.API
         [HttpGet]
         public IActionResult GetCustomers()
         {
-            var customers = _context.Customers;
+            var customers = _context.Customers.Include( m=> m.MembershipType);
             var recordsTotal = customers.Count();
             var jsonData = new { recordsTotal, data = customers };
 
@@ -73,7 +74,6 @@ namespace Vidly.Controllers.API
             {
                 var newCustomer = _mapper.Map<Customer>(customerDto);
                 _context.SaveChanges();
-                //return updated customer
                 return Ok(newCustomer);
             }
 

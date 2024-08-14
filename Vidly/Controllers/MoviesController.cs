@@ -22,8 +22,8 @@ public class MoviesController : Controller
 
     public IActionResult Index()
     {
-        var movies = _context.Movies.Include(m => m.Genre).ToList();
-        return View(movies);
+        //var movies = _context.Movies.Include(m => m.Genre).ToList();
+        return View();
     }
     [Route("movies/details/{id}")]
     public IActionResult Details(int id)

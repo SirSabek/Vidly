@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Vidly.Dtos;
 using Vidly.Models;
 
@@ -20,10 +21,12 @@ namespace Vidly.Controllers.API
         }
 
         [HttpGet]
-        public IEnumerable<MovieDto> GetMovies()
+        public IActionResult GetMovies()
         {
-            //mapping Movie to MovieDto
-            return _mapper.Map<IEnumerable<Movie>, IEnumerable<MovieDto>>(_context.Movies.ToList());
+            var movies = _context.Movies.Include(m => m.Genre);
+            var recordsTotal = movies.Count();
+            var jsonData = new { recordsTotal, data = movies };
+            return Ok(jsonData);
         }
 
         [HttpGet("{id}")]
