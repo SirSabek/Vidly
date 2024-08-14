@@ -4,15 +4,14 @@
     ViewBag.Title = "title";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@* Add bootstrap button to create new movie that redirect to add new movie view *@
 <p>
     @Html.ActionLink("Add New Movie", "AddNewMovie", "Movies", null, new { @class = "btn btn-primary" })
 </p>
 <table class="table table-bordered table-hover">
     <thead class="thead-dark">
     <tr>
-        <th>Movie Id</th>
-        <th>Name</th>
+        <th>Movie</th>
+        <th>Genre</th>
     </tr>
     </thead>
     <tbody>
@@ -20,7 +19,7 @@
     {
         <tr>
             <td>@Html.ActionLink(movie.Name,"Edit","Movies",new{id = movie.Id})</td>
-            <td>@movie.Genre</td>
+            <td>@movie.Genre.Name</td>
         </tr>
     }
     </tbody>

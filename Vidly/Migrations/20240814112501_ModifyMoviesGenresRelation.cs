@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Vidly.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class ModifyMoviesGenresRelation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,6 +53,18 @@ namespace Vidly.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Genres",
+                columns: table => new
+                {
+                    Id = table.Column<byte>(type: "tinyint", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Genres", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MembershipTypes",
                 columns: table => new
                 {
@@ -65,24 +77,6 @@ namespace Vidly.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MembershipTypes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Movies",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Genre = table.Column<int>(type: "int", nullable: false),
-                    GenreId = table.Column<byte>(type: "tinyint", nullable: false),
-                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DateAdded = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NumberInStock = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Movies", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -192,6 +186,29 @@ namespace Vidly.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Movies",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GenreId = table.Column<byte>(type: "tinyint", nullable: false),
+                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateAdded = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NumberInStock = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Movies", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Movies_Genres_GenreId",
+                        column: x => x.GenreId,
+                        principalTable: "Genres",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
                 {
@@ -214,6 +231,17 @@ namespace Vidly.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Genres",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { (byte)1, "Action" },
+                    { (byte)2, "Comedy" },
+                    { (byte)3, "Horror" },
+                    { (byte)4, "Tragedy" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "MembershipTypes",
                 columns: new[] { "Id", "DiscountRate", "DurationInMonths", "Name", "SignUpFee" },
                 values: new object[,]
@@ -225,18 +253,6 @@ namespace Vidly.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Movies",
-                columns: new[] { "Id", "DateAdded", "Genre", "GenreId", "Name", "NumberInStock", "ReleaseDate" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, (byte)0, "Shrek", 6, new DateTime(2001, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, (byte)0, "Wall-e", 3, new DateTime(2008, 6, 27, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, (byte)0, "The Hangover", 5, new DateTime(2009, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, (byte)0, "Anastasia", 2, new DateTime(1997, 11, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, (byte)0, "Die Hard", 4, new DateTime(1988, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Customers",
                 columns: new[] { "Id", "BirthDate", "IsSubscribedToNewsLetter", "MembershipTypeId", "Name" },
                 values: new object[,]
@@ -245,6 +261,18 @@ namespace Vidly.Migrations
                     { 2, new DateTime(1995, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, (byte)2, "Mary Williams" },
                     { 3, new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, (byte)3, "John Doe" },
                     { 4, new DateTime(2005, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, (byte)4, "Jane Doe" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Movies",
+                columns: new[] { "Id", "DateAdded", "GenreId", "Name", "NumberInStock", "ReleaseDate" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), (byte)1, "Shrek", 6, new DateTime(2001, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), (byte)2, "Wall-e", 3, new DateTime(2008, 6, 27, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), (byte)3, "The Hangover", 5, new DateTime(2009, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), (byte)3, "Anastasia", 2, new DateTime(1997, 11, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), (byte)1, "Die Hard", 4, new DateTime(1988, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -290,6 +318,11 @@ namespace Vidly.Migrations
                 name: "IX_Customers_MembershipTypeId",
                 table: "Customers",
                 column: "MembershipTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Movies_GenreId",
+                table: "Movies",
+                column: "GenreId");
         }
 
         /// <inheritdoc />
@@ -324,6 +357,9 @@ namespace Vidly.Migrations
 
             migrationBuilder.DropTable(
                 name: "MembershipTypes");
+
+            migrationBuilder.DropTable(
+                name: "Genres");
         }
     }
 }

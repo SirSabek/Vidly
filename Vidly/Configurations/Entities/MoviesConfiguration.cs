@@ -13,7 +13,7 @@ public class MoviesConfiguration : IEntityTypeConfiguration<Movie>
             {
                 Id = 1,
                 Name = "Shrek",
-                Genre = Genre.Comedy,
+                GenreId = 1,
                 ReleaseDate = new DateTime(2001, 6, 22),
                 DateAdded = new DateTime(2021, 8, 1),
                 NumberInStock = 6
@@ -22,7 +22,7 @@ public class MoviesConfiguration : IEntityTypeConfiguration<Movie>
             {
                 Id = 2,
                 Name = "Wall-e",
-                Genre = Genre.Family,
+                GenreId = 2,
                 ReleaseDate = new DateTime(2008, 6, 27),
                 DateAdded = new DateTime(2021, 8, 1),
                 NumberInStock = 3
@@ -31,7 +31,7 @@ public class MoviesConfiguration : IEntityTypeConfiguration<Movie>
             {
                 Id = 3,
                 Name = "The Hangover",
-                Genre = Genre.Comedy,
+                GenreId =3,
                 ReleaseDate = new DateTime(2009, 6, 5),
                 DateAdded = new DateTime(2021, 8, 1),
                 NumberInStock = 5
@@ -40,7 +40,7 @@ public class MoviesConfiguration : IEntityTypeConfiguration<Movie>
             {
                 Id = 4,
                 Name = "Anastasia",
-                Genre = Genre.Romance,
+                GenreId =3,
                 ReleaseDate = new DateTime(1997, 11, 21),
                 DateAdded = new DateTime(2021, 8, 1),
                 NumberInStock = 2
@@ -49,7 +49,7 @@ public class MoviesConfiguration : IEntityTypeConfiguration<Movie>
             {
                 Id = 5,
                 Name = "Die Hard",
-                Genre = Genre.Action,
+                GenreId = 1,
                 ReleaseDate = new DateTime(1988, 7, 15),
                 DateAdded = new DateTime(2021, 8, 1),
                 NumberInStock = 4

@@ -10,11 +10,13 @@ public class AppDbContext : IdentityDbContext<AppUser>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfiguration(new MembershipConfiguration());
+        modelBuilder.ApplyConfiguration(new GenreConfiguration());
         modelBuilder.ApplyConfiguration(new MoviesConfiguration());
+        modelBuilder.ApplyConfiguration(new MembershipConfiguration());
         modelBuilder.ApplyConfiguration(new CustomersConfiguration());
     }
     public DbSet<Movie> Movies { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<MembershipType> MembershipTypes { get; set; }
+    public DbSet<Genre> Genres{ get; set; }
 }

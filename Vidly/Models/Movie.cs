@@ -8,6 +8,7 @@ public class Movie
     [Required]
     public string Name { get; set; } = null!;
     [Required]
+    public byte GenreId { get; set; }
     public Genre Genre { get; set; }
     [Required]
     public DateTime ReleaseDate { get; set; }
@@ -15,13 +16,4 @@ public class Movie
     [Required]
     [Range(1, 20)]
     public int NumberInStock { get; set; }
-}
-
-public enum Genre
-{
-    Action = 1,
-    Comedy,
-    Family,
-    Romance,
-    Horror
 }

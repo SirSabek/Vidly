@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Vidly.Models;
 using Vidly.ViewModels;
 
@@ -15,12 +17,12 @@ public class MoviesController : Controller
 
     protected override void Dispose(bool disposing)
     {
-       _context.Dispose();
+        _context.Dispose();
     }
 
     public IActionResult Index()
     {
-        var movies = _context.Movies.ToList();
+        var movies = _context.Movies.Include(m => m.Genre).ToList();
         return View(movies);
     }
     [Route("movies/details/{id}")]
@@ -34,25 +36,36 @@ public class MoviesController : Controller
 
     public IActionResult AddNewMovie()
     {
-        var genres = new List<Genre>
-        {
-            Genre.Action,
-            Genre.Comedy,
-            Genre.Family,
-            Genre.Romance,
-            Genre.Horror
-        };
+        var genres = _context.Genres.ToList();
         var viewModel = new MovieFormViewModel
         {
             Movie = new Movie(),
             Genres = genres
         };
-        return View(viewModel);
+        return View("MovieForm",viewModel);
     }
-    
+
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Save(Movie movie)
     {
+        ModelState.Remove("Movie.Genre");
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+            foreach (var error in errors)
+            {
+                Console.WriteLine(error.ErrorMessage);
+            }
+            var viewModel = new MovieFormViewModel
+            {
+                Movie = movie,
+                Genres = _context.Genres.ToList()
+            };
+
+            return View("MovieForm", viewModel);
+        }
+
         if (movie.Id == 0)
         {
             _context.Movies.Add(movie);
@@ -61,33 +74,28 @@ public class MoviesController : Controller
         {
             var movieInDb = _context.Movies.FirstOrDefault(m => m.Id == movie.Id);
             movieInDb.Name = movie.Name;
-            movieInDb.Genre = movie.Genre;
+            movieInDb.GenreId = movie.GenreId;
             movieInDb.ReleaseDate = movie.ReleaseDate;
             movieInDb.DateAdded = movie.DateAdded;
             movieInDb.NumberInStock = movie.NumberInStock;
         }
-        _context.SaveChanges();
-        return RedirectToAction("Index", "Movies");
+    _context.SaveChanges();
+    return RedirectToAction("Index", "Movies");
     }
-    
     public IActionResult Edit(int id)
     {
         var movie = _context.Movies.SingleOrDefault(m => m.Id == id);
         if (movie == null)
+        {
             return NotFound();
+        }
+
         var viewModel = new MovieFormViewModel
         {
             Movie = movie,
-            Genres = new List<Genre>
-            {
-                Genre.Action,
-                Genre.Comedy,
-                Genre.Family,
-                Genre.Romance,
-                Genre.Horror
-            }
+            Genres = _context.Genres.ToList()
         };
-        return View("AddNewMovie", viewModel);
+        return View("MovieForm", viewModel);
     }
 
 }
