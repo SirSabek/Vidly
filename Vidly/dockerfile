@@ -1,0 +1,27 @@
+# Stage 1: Build the application
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy csproj and restore as distinct layers
+COPY ["Vidly.csproj", "./"]
+RUN dotnet restore "./Vidly.csproj"
+
+# Copy everything else and build
+COPY . .
+RUN dotnet build "Vidly.csproj" -c Release -o /app/build
+
+# Publish the application
+RUN dotnet publish "Vidly.csproj" -c Release -o /app/publish
+
+# Stage 2: Create the runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+
+# Copy the published files
+COPY --from=build /app/publish .
+
+# Set the entry point
+ENTRYPOINT ["dotnet", "Vidly.dll"]
+
+# Expose the necessary port
+EXPOSE 80

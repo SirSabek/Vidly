@@ -21,6 +21,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 //adding auto mapper
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
+
+builder.WebHost.UseUrls("http://*:80");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

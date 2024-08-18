@@ -1,0 +1,52 @@
+# Ignore .NET build directories
+**/bin/
+**/obj/
+
+# Ignore user-specific files
+**/*.user
+**/*.suo
+
+# Ignore build output
+**/publish/
+**/out/
+
+# Ignore application configuration files
+appsettings.Development.json
+
+# Ignore IDE directories and settings
+.vscode/
+.idea/
+*.sln.*
+*.csproj.user
+
+# Ignore Docker files
+Dockerfile*
+.dockerignore
+
+# Ignore logs, temp files, and backups
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Ignore NPM package directory if your project includes frontend assets
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Ignore build and deployment directories
+build/
+deployment/
+
+# Ignore environment variable files
+.env
+.env.*
+
+# Ignore Git and other VCS files
+.git/
+.gitignore
+.gitattributes
+
+# Ignore sensitive files
+**/secrets/
+**/private/
