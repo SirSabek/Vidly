@@ -19,4 +19,5 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<Customer> Customers { get; set; }
     public DbSet<MembershipType> MembershipTypes { get; set; }
     public DbSet<Genre> Genres{ get; set; }
+    public DbSet<AppUser> Users { get; set; }
 }
