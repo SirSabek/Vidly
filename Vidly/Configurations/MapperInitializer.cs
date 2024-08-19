@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Vidly.Dtos;
 using Vidly.Models;
+using Vidly.ViewModels;
 
 namespace Vidly.Configurations
 {
@@ -10,6 +11,7 @@ namespace Vidly.Configurations
         {
             CreateMap<Customer, CustomerDto>().ReverseMap();
             CreateMap<Movie, MovieDto>().ReverseMap();
+            CreateMap<RegisterViewModel, AppUser>().ReverseMap();
         }
     }
 }

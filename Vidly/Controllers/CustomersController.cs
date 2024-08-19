@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Vidly.Models;
@@ -5,6 +6,7 @@ using Vidly.ViewModels;
 
 namespace Vidly.Controllers;
 
+[Authorize]
 public class CustomersController : Controller
 {
     private readonly AppDbContext _context;
