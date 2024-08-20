@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
@@ -19,13 +20,15 @@ public class AccountController : Controller
     private readonly IMapper _mapper;
     private readonly SignInManager<AppUser>  _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IEmailSender _emailSender;
 
-    public AccountController(UserManager<AppUser> userManager, IMapper mapper, SignInManager<AppUser> signInManager, RoleManager<IdentityRole> roleManager)
+    public AccountController(UserManager<AppUser> userManager, IMapper mapper, SignInManager<AppUser> signInManager, RoleManager<IdentityRole> roleManager, IEmailSender emailSender)
     {
         _userManager = userManager;
         _mapper = mapper;
         _signInManager = signInManager;
         _roleManager = roleManager;
+        _emailSender = emailSender;
     }
     public IActionResult Index()
     {
@@ -76,7 +79,7 @@ public class AccountController : Controller
         return View(model);
     }
 
-      [HttpGet]
+    [HttpGet]
     public async Task<IActionResult> Login(string returnUrl = null)
     {
         ViewData["ReturnUrl"] = returnUrl;
@@ -92,11 +95,17 @@ public class AccountController : Controller
 
         if (ModelState.IsValid)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: true);
             if (result.Succeeded)
             {
                 return LocalRedirect(returnUrl);
             }
+
+            if(result.IsLockedOut)
+            {
+                return View("Lockout");
+            }
+
             ModelState.AddModelError(string.Empty, "Invalid Login");
             return View(model);
         }
@@ -111,12 +120,79 @@ public class AccountController : Controller
         return RedirectToAction("Index", "Home");
     }
 
+    [HttpGet]
+    public async Task<IActionResult> ForgotPassword()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
+    {
+        if(ModelState.IsValid)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return RedirectToAction("ForgotPasswordConfirmation");
+            }
+
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var callBackUrl = Url.Action("ResetPassword", "Account",new {userId = user.Id, code = code }, HttpContext.Request.Scheme);
+
+            await _emailSender.SendEmailAsync(model.Email, "Reset Password - Identity Manager", 
+                "Please reset your password by clicking here: <a href\"" + callBackUrl +"\">link</a>");
+
+            return RedirectToAction("ForgotPasswordConfirmation");
+        }
+        return View(model);
+    }
+    [HttpGet]
+    public async Task<IActionResult>  ForgotPasswordConfirmation()
+    {
+        
+        return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult>  ResetPassword(string code = null)
+    {
+        return code == null ? View("Error") : View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult>  ResetPassword(ResetPasswordViewModel model)
+    {
+        if(ModelState.IsValid)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if(user == null)
+            {
+                return RedirectToAction("ResetPasswordConfirmation");
+            }
+            var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+
+            if(result.Succeeded)
+            {
+                return RedirectToAction("ResetPasswordConfirmation");
+            }
+            AddErrors(result);
+        }
+        return View(model);
+    }
+
+
+
+
+
 
     private void AddErrors(IdentityResult result)
+    {
+        foreach (var error in result.Errors)
         {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+            ModelState.AddModelError(string.Empty, error.Description);
         }
+    }
 }
