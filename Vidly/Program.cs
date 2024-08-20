@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Vidly.Configurations;
 using Vidly.Models;
+using Vidly.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +24,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     ));
 
 //adding Identity
-builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+builder.Services.Configure<IdentityOptions>(opt =>
+{
+    opt.Password.RequiredLength = 8;
+    opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+    opt.Lockout.MaxFailedAccessAttempts = 3;
+}
+);
 
 //adding auto mapper
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
+
+builder.Services.AddTransient<IEmailSender, MailJetEmailSender>();
 
 builder.WebHost.UseUrls("http://*:5000");
 
