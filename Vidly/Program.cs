@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
@@ -26,6 +27,12 @@ builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<A
 
 //adding auto mapper
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
+
+//adding Mediatr
+builder.Services.AddMediatR(options =>
+{
+    options.RegisterServicesFromAssemblyContaining(typeof(Program));
+});
 
 builder.WebHost.UseUrls("http://*:5000");
 
