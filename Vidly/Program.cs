@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,12 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 //adding auto mapper
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
+
+//adding Mediatr
+builder.Services.AddMediatR(options =>
+{
+    options.RegisterServicesFromAssemblyContaining(typeof(Program));
+});
 
 builder.WebHost.UseUrls("http://*:5000");
 

@@ -1,10 +1,13 @@
 ﻿using System.Net;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Vidly.Commands;
 using Vidly.Dtos;
 using Vidly.Models;
+using Vidly.Queries;
 
 namespace Vidly.Controllers.API
 {
@@ -12,19 +15,20 @@ namespace Vidly.Controllers.API
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ISender _mediator;
 
-        public CustomersController(AppDbContext context, IMapper mapper)
+        public CustomersController(IMapper mapper, ISender mediator)
         {
-            _context = context;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public IActionResult GetCustomers()
+        public async Task<IActionResult> GetCustomers( )
         {
-            var customers = _context.Customers.Include( m=> m.MembershipType);
+            var query = new GetCustomersQuery();
+            var customers =await _mediator.Send(query);
             var recordsTotal = customers.Count();
             var jsonData = new { recordsTotal, data = customers };
 
@@ -32,67 +36,61 @@ namespace Vidly.Controllers.API
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetCustomer(int id)
+        public async Task<IActionResult> GetCustomer(int id)
         {
-            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
-
-            if (customer == null)
+            var query = new GetCustomerQuery(id);
+            var result = await _mediator.Send(query);
+            if (result is null)
             {
                 return NotFound();
             }   
-
-            return Ok(_mapper.Map<CustomerDto>(customer));
+            return Ok(result);
         }
 
         [HttpPost]
-        public IActionResult CreateCustomer(CustomerDto customerDto) 
+        public async Task <IActionResult> CreateCustomer(CreateCustomerCommand command) 
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var customer = _mapper.Map<CustomerDto, Customer>(customerDto);
-            _context.Customers.Add(customer);
-            _context.SaveChanges();
+            var customer = await _mediator.Send(command);
             //return created status code
             return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, customer);
-
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateCustomer(CustomerDto customerDto, int id)
+        public async Task<IActionResult> UpdateCustomer(int id, [FromBody] UpdateCustomerCommand command)
         {
-            if (!ModelState.IsValid)
+           if (id != command.Id)
             {
-                throw new BadHttpRequestException("not valid");
+                return BadRequest("Customer ID mismatch.");
             }
-
-            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
-
-            if (customer != null)
+            var customer = await _mediator.Send(command);
+            if (customer == null)
             {
-                var newCustomer = _mapper.Map<Customer>(customerDto);
-                _context.SaveChanges();
-                return Ok(newCustomer);
+                return NotFound("Customer not found.");
             }
-
-            throw new HttpRequestException("not valid");
+            return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, customer);
         }
 
         [HttpDelete("{id}")]
-        public void DeleteCustomer(int id )
+        public async Task<IActionResult> DeleteCustomer(int id, [FromBody]DeleteCustomerCommand command )
         {
-            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
-
-            if (customer == null)
+             if (id != command.Id)
             {
-                throw new HttpRequestException("not valid");
+                return BadRequest("Customer ID mismatch.");
             }
 
-            _context.Customers.Remove(customer);
-            _context.SaveChanges();
+            var result =await _mediator.Send(command);
 
+            if (result == false)
+            {
+                throw new HttpRequestException("not found");
+            }
+
+            return Ok("customer is deleted!");
         }
     }
 }
