@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Vidly.Commands;
 using Vidly.Dtos;
 using Vidly.Models;
+using Vidly.Queries;
 
 namespace Vidly.Controllers.API
 {
@@ -14,21 +15,20 @@ namespace Vidly.Controllers.API
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly IMapper _mapper;
         private readonly ISender _mediator;
 
-        public CustomersController(AppDbContext context, IMapper mapper, ISender mediator)
+        public CustomersController(IMapper mapper, ISender mediator)
         {
-            _context = context;
             _mapper = mapper;
             _mediator = mediator;
         }
 
         [HttpGet]
-        public IActionResult GetCustomers()
+        public async Task<IActionResult> GetCustomers( )
         {
-            var customers = _context.Customers.Include( m=> m.MembershipType);
+            var query = new GetCustomersQuery();
+            var customers =await _mediator.Send(query);
             var recordsTotal = customers.Count();
             var jsonData = new { recordsTotal, data = customers };
 
@@ -36,16 +36,15 @@ namespace Vidly.Controllers.API
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetCustomer(int id)
+        public async Task<IActionResult> GetCustomer(int id)
         {
-            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
-
-            if (customer == null)
+            var query = new GetCustomerQuery(id);
+            var result = await _mediator.Send(query);
+            if (result is null)
             {
                 return NotFound();
             }   
-
-            return Ok(_mapper.Map<CustomerDto>(customer));
+            return Ok(result);
         }
 
         [HttpPost]
