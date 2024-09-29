@@ -33,10 +33,10 @@ builder.Services.Configure<IdentityOptions>(opt =>
 }
 );
 
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 //adding auto mapper
 builder.Services.AddAutoMapper(typeof(MapperInitializer));
-
-builder.Services.AddTransient<IEmailSender, MailJetEmailSender>();
 
 builder.WebHost.UseUrls("http://*:5000");
 

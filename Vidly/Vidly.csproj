@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RuntimeIdentifier>linux-x64</RuntimeIdentifier> <!-- Specify target platform -->
+    <UserSecretsId>3bfb468a-2137-4ceb-8e96-3c5cefca857d</UserSecretsId>
   </PropertyGroup>
   
     <ItemGroup>
@@ -20,6 +21,7 @@
         <PrivateAssets>all</PrivateAssets>
       </PackageReference>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="SendGrid" Version="9.29.3" />
     </ItemGroup>
 
 </Project>

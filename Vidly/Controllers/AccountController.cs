@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
 using Vidly.Models;
 using Vidly.ViewModels;
 
@@ -141,8 +135,11 @@ public class AccountController : Controller
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
             var callBackUrl = Url.Action("ResetPassword", "Account",new {userId = user.Id, code = code }, HttpContext.Request.Scheme);
 
-            await _emailSender.SendEmailAsync(model.Email, "Reset Password - Identity Manager", 
-                "Please reset your password by clicking here: <a href\"" + callBackUrl +"\">link</a>");
+            await _emailSender.SendEmailAsync(
+                model.Email,
+                "Reset Password - Identity Manager",
+                $"Please reset your password by clicking here: <a href=\"{callBackUrl}\">link</a>"
+            );
 
             return RedirectToAction("ForgotPasswordConfirmation");
         }
